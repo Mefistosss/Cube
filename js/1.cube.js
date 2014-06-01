@@ -1,1 +1,3 @@
-console.log('ololo');
+var init = function () {
+	console.log('ololo');	
+}
