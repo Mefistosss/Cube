@@ -7,14 +7,15 @@
 		canvas.className += (canvas.className ? ' ' : '') + 'cube';
 
         try {
-            canvas.innerHTML = 'not supported';
+            canvas.innerHTML = 'not supported!';
         } catch (e){
-	        canvas.innerText = 'not supported';
+	        canvas.innerText = 'not supported!';
         }
 
         wrapper.appendChild(canvas);
+
 		document.body.appendChild(wrapper);
 
-		init();
+		init(canvas);
 	}, false);
 })();
