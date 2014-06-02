@@ -38,66 +38,94 @@ var Cube = (function() {
         points.push([p8]);
 	};
 
-	cube.prototype.setPosition = function(_x, _y) {
-		_x && (x = _x);
-		_y && (y = _y);
-	};
+	cube.prototype = {
 
-	cube.prototype.rotateOX = function(phi) {
-		var i, cos, sin, _y, _z;
-		
-		cos = Math.cos(phi);
-        sin = Math.sin(phi);
+		setPosition: function(_x, _y) {
+			_x && (x = _x);
+			_y && (y = _y);
+		},
 
-        for (i = 0; i < points.length; i++) {
-            _y = points[i][0].y;
-            _z = points[i][0].z;
-            points[i][0].z = _y * sin + _z * cos;
-            points[i][0].y = _y * cos + _z * sin * (-1);
-        }
-	};
+		rotateOX: function(phi) {
+			var i, _y, _z,
+				cos = Math.cos(phi),
+	    		sin = Math.sin(phi);
 
-	cube.prototype.diff = function(os) {
-		var i, min = Number.MAX_VALUE, max = 0;
-		for (i = 0; i < arr.length; i++) {
-			if (arr[i][os] > max) {
-				max = arr[i][os];
+	        for (i = 0; i < points.length; i++) {
+	            _y = points[i][0].y;
+	            _z = points[i][0].z;
+	            points[i][0].z = _y * sin + _z * cos;
+	            points[i][0].y = _y * cos + _z * sin * (-1);
+	        }
+		},
+
+		rotateOY: function(phi) {
+			var i, _x, _z,
+				cos = Math.cos(phi),
+				sin = Math.sin(phi);
+
+	        for (i = 0; i < points.length; i++) {
+	            _x = points[i][0].x;
+	            _z = points[i][0].z;
+	            points[i][0].z = _x * sin + _z * cos;
+	            points[i][0].x = _x * cos + _z * sin * (-1);
+	        }
+		},
+
+		rotateOZ: function(phi) {
+			var i, _x, _y,
+				cos = Math.cos(phi * (-1)),
+				sin = Math.sin(phi);
+
+	        for (i = 0; i < points.length; i++) {
+	            _x = points[i][0].x;
+	            _y = points[i][0].y;
+	            points[i][0].y = _y * cos - _x * sin;
+	            points[i][0].x = _x * cos + _y * sin;
+	        }
+		},
+
+		diff: function(os) {
+			var i, min = Number.MAX_VALUE, max = 0;
+			for (i = 0; i < arr.length; i++) {
+				if (arr[i][os] > max) {
+					max = arr[i][os];
+				}
+				if (arr[i][os] < min) {
+					min = arr[i][os];
+				}
 			}
-			if (arr[i][os] < min) {
-				min = arr[i][os];
-			}
+			return (max + min);
+		},
+
+		centering: function(_width, _height) {
+			var i, dx = (_width - this.diff('x')) / 2,
+				dy = (_height - this.diff('y')) / 2;
+
+	        for (i = 0; i < arr.length; i++) {
+	            arr[i].x += dx;
+	            arr[i].y += dy;
+	        }
+		},
+
+		render: function() {
+			var i, j;
+
+		    gcontext.beginPath();
+
+
+		    gcontext.lineWidth = 2;
+		    gcontext.strokeStyle = 'red';
+
+		    for (i = 0; i < points.length; i++) {
+		    	if (points[i].length > 1) {
+		    		for (j = 1; j < points[i].length; j++) {
+						gcontext.moveTo(points[i][0].x, points[i][0].y);
+						gcontext.lineTo(points[i][j].x, points[i][j].y);	    		
+			    	}	
+		    	}
+		    }
+		    gcontext.stroke();
 		}
-		return max - min;
-	};
-
-	cube.prototype.centering = function(_width, _height) {
-		var i, dx = (_width - this.diff('x')) / 2,
-			dy = (_height - this.diff('y')) / 2;
-
-        for (i = 0; i < arr.length; i++) {
-            arr[i].x += dx;
-            arr[y].y += dy;
-        }
-	};
-
-	cube.prototype.render = function() {
-		var i, j;
-
-	    gcontext.beginPath();
-
-
-	    gcontext.lineWidth = 2;
-	    gcontext.strokeStyle = 'red';
-
-	    for (i = 0; i < points.length; i++) {
-	    	if (points[i].length > 1) {
-	    		for (j = 1; j < points[i].length; j++) {
-					gcontext.moveTo(points[i][0].x, points[i][0].y);
-					gcontext.lineTo(points[i][j].x, points[i][j].y);	    		
-		    	}	
-	    	}
-	    }
-	    gcontext.stroke();
 	};
 
 	return cube;

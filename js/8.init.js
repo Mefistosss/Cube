@@ -1,10 +1,13 @@
 
 var init = function (canvas) {
-	var cube;
+	var cube, lastX, lastY,
+		move = false;
+
 	if (!canvas.getContext) {
 		throw "Do not support the canvas!"
 		return;
 	}
+
 	gcanvas = canvas;
 	gcontext = canvas.getContext('2d');
 
@@ -12,22 +15,38 @@ var init = function (canvas) {
 	gcanvas.height= gheight = gcanvas.parentNode.offsetHeight;
 
 
-	cube = new Cube(350, 350, 100);
+	cube = new Cube(gwidth / 2 - 50, gheight / 2 - 50, 100);
 
 
-    // temp -----------------------------------
-    	var button = document.createElement('BUTTON');
-    	button.className += (button.className ? ' ' : '') + 'button';
+    gcanvas.onmousedown = function(e) {
+    	move = true;
+    	lastX = e.x;
+    	lastY = e.y;
+    };
 
-    	gcanvas.parentNode.appendChild(button);
-    	button.onclick = function () {
-    		cube.rotateOX(0.05);
+    gcanvas.onmouseup = function() {
+    	move = false;
+    };
+
+    gcanvas.onmousemove = function(e) {
+    	if (move) {
+    		cube.rotateOX((lastX - e.x) * 0.002);
+    		cube.rotateOY((lastY - e.y) * 0.002);
     		cube.centering(gwidth, gheight);
     	}
-    // temp -----------------------------------
+    };
+
+    gcanvas.onmousewheel = function(e) {
+		cube.rotateOZ(e.wheelDelta * 0.002);
+		cube.centering(gwidth, gheight);
+    };
+
+    window.onresize = function() {
+    	console.log('onresize');
+    };
 
 
-	var render = function() {
+	function render() {
 		cube.render();
 	};
 
