@@ -45,7 +45,7 @@ var Cube = (function() {
 			_y && (y = _y);
 		},
 
-		rotateOX: function(phi) {
+		rotateOY: function(phi) {
 			var i, _y, _z,
 				cos = Math.cos(phi),
 	    		sin = Math.sin(phi);
@@ -58,7 +58,7 @@ var Cube = (function() {
 	        }
 		},
 
-		rotateOY: function(phi) {
+		rotateOX: function(phi) {
 			var i, _x, _z,
 				cos = Math.cos(phi),
 				sin = Math.sin(phi);
@@ -84,8 +84,8 @@ var Cube = (function() {
 	        }
 		},
 
-		diff: function(os) {
-			var i, min = Number.MAX_VALUE, max = 0;
+		minMax: function(os) {
+			var i, min = Number.MAX_VALUE, max = Number.MAX_VALUE * (-1);
 			for (i = 0; i < arr.length; i++) {
 				if (arr[i][os] > max) {
 					max = arr[i][os];
@@ -94,12 +94,17 @@ var Cube = (function() {
 					min = arr[i][os];
 				}
 			}
-			return (max + min);
+			return {
+				'max': max,
+				'min': min
+			};
 		},
 
 		centering: function(_width, _height) {
-			var i, dx = (_width - this.diff('x')) / 2,
-				dy = (_height - this.diff('y')) / 2;
+			var i, diffX = this.minMax('x'),
+				diffY = this.minMax('y'),
+				dx = (_width - diffX.max - diffX.min) / 2,
+				dy = (_height - diffY.max - diffY.min) / 2;
 
 	        for (i = 0; i < arr.length; i++) {
 	            arr[i].x += dx;
@@ -114,7 +119,7 @@ var Cube = (function() {
 
 
 		    gcontext.lineWidth = 2;
-		    gcontext.strokeStyle = 'red';
+		    // gcontext.strokeStyle = 'red';
 
 		    for (i = 0; i < points.length; i++) {
 		    	if (points[i].length > 1) {

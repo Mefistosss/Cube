@@ -1,6 +1,7 @@
 
 var init = function (canvas) {
 	var cube, lastX, lastY,
+		cubeWidth,
 		move = false;
 
 	if (!canvas.getContext) {
@@ -12,10 +13,10 @@ var init = function (canvas) {
 	gcontext = canvas.getContext('2d');
 
 	gcanvas.width = gwidth = gcanvas.parentNode.offsetWidth;
-	gcanvas.height= gheight = gcanvas.parentNode.offsetHeight;
+	gcanvas.height = gheight = gcanvas.parentNode.offsetHeight;
 
-
-	cube = new Cube(gwidth / 2 - 50, gheight / 2 - 50, 100);
+	cubeWidth = Math.min(gwidth, gheight) / 3;
+	cube = new Cube(gwidth / 2 - cubeWidth / 2, gheight / 2 - cubeWidth / 2, cubeWidth);
 
 
     gcanvas.onmousedown = function(e) {
@@ -31,7 +32,7 @@ var init = function (canvas) {
     gcanvas.onmousemove = function(e) {
     	if (move) {
     		cube.rotateOX((lastX - e.x) * 0.002);
-    		cube.rotateOY((lastY - e.y) * 0.002);
+    		cube.rotateOY((e.y - lastY) * 0.002);
     		cube.centering(gwidth, gheight);
     	}
     };
@@ -42,7 +43,9 @@ var init = function (canvas) {
     };
 
     window.onresize = function() {
-    	console.log('onresize');
+		gcanvas.width = gwidth = gcanvas.parentNode.offsetWidth;
+		gcanvas.height = gheight = gcanvas.parentNode.offsetHeight;
+		cube.centering(gwidth, gheight);
     };
 
 
